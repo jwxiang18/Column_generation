@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -6,7 +7,7 @@ public class ESPPRC {
     Instance instance;
     Order[] orders;
     double[] duals;
-    List<Route> routes;  // list of routes / labels for ESPPRC
+    Deque<Route> routes;  // list of routes / labels for ESPPRC
     List<Route> addRoutes;
     List<List<Route>> candidateRoutes; // list of candidate routes for ESPPRC
 
@@ -15,7 +16,7 @@ public class ESPPRC {
         orders = instance.orders;
         this.duals = duals;
 
-        routes = new ArrayList<>();
+        routes = new LinkedList<>();
         candidateRoutes = new LinkedList<>();
         for(int i = 0 ; i < instance.numOrders+2 ; i++){
             candidateRoutes.add(new LinkedList<>());
@@ -23,12 +24,11 @@ public class ESPPRC {
     }
 
     public List<Route> main(List<Route> Allroutes){
-        routes.add(new Route(instance));
+        routes.offer(new Route(instance));
         addRoutes = new LinkedList<>();
-        int routePointer = 0;
-        while(routePointer < routes.size()){
-            searchNextPoint(routes.get(routePointer));
-            routePointer++;
+
+        while(!routes.isEmpty()){
+            searchNextPoint(routes.poll());
         }
         for(int i = 0 ; i < candidateRoutes.get(instance.numOrders+1).size() ; i++){
             if(candidateRoutes.get(instance.numOrders+1).get(i).sigma > -1e-6) continue;

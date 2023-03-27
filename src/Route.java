@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 public class Route {
@@ -6,6 +7,7 @@ public class Route {
     public Order lastOrder;
     public List<Order> path;
     public int[] hasVisit;
+    public BitSet hasVisitBitSet;
     public double  distance , time , sigma ,dual ;
     public double weight ;
 
@@ -14,6 +16,9 @@ public class Route {
         path = new ArrayList<>();
         path.add(instance.orders[0]);
         hasVisit = new int[(int)Math.ceil(instance.orders.length/32.0)];
+        hasVisitBitSet = new BitSet(instance.orders.length);
+        BitSet hasVisitBitSet2 = new BitSet(instance.orders.length);
+        hasVisitBitSet.set(0);
         hasVisit[0] += 1;
         lastOrder = instance.orders[0];
         weight = 0;

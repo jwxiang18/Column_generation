@@ -43,6 +43,7 @@ public class ReadData {
                     instance.distance[j][i] = instance.distance[i][j];
                 }
             }
+
         }
         return instance;
     }
