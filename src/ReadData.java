@@ -44,6 +44,16 @@ public class ReadData {
                 }
             }
 
+            for(int i = 0 ; i < instance.numOrders+2 ; i++){
+                for(int j = 0 ; j < instance.numOrders+2 ; j++){
+                    if(i!=j){
+                        if(instance.orders[i].readyTime+instance.orders[i].serviceTime+instance.distance[i][j] > instance.orders[j].dueDate){
+                            instance.canNotVisitBitSet[i].set(j);
+                        }
+                    }
+                }
+            }
+
         }
         return instance;
     }

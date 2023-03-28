@@ -67,7 +67,7 @@ public class CG {
             int [] new_column = new int[instance.numOrders];
             Arrays.fill(new_column,0);
             for (int i = 1; i < route.path.size()-1; i++) {
-                new_column[route.path.get(i).NO-1] = 1;
+                new_column[route.path.get(i)-1] = 1;
             }
             GRBColumn new_RLMP_col = new GRBColumn();
             for (int i = 0; i < instance.numOrders; i++) {

@@ -7,7 +7,6 @@ public class Main {
 
         Instance instance = ReadData.readData("C101.txt" , 100);
         CG cg = new CG(instance);
-
         cg.MP();
     }
 }

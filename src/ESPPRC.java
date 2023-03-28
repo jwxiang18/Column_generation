@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ESPPRC {
     Instance instance;
@@ -39,7 +36,7 @@ public class ESPPRC {
     }
 
     private void searchNextPoint(Route route){
-        int lastNo = route.path.get(route.path.size() -1).NO;
+        int lastNo = route.lastOrder.NO;
         if(lastNo == instance.numOrders) return;
         for(int i = 1 ; i < instance.numOrders+2 ; i++){
             Route newRoute = route.add(orders[i] ,duals);
@@ -56,14 +53,14 @@ public class ESPPRC {
             if(route.sigma >= competitors.get(i).sigma &&
                     route.weight >= competitors.get(i).weight &&
                     route.time >= competitors.get(i).time
-//                    && contains(competitors.get(i).hasVisit , route.hasVisit)
+                    && contains(competitors.get(i).hasVisitBitSet , route.hasVisitBitSet)
             ){
                 return true;
             }
             if(route.sigma <= competitors.get(i).sigma &&
                     route.weight <= competitors.get(i).weight &&
                     route.time <= competitors.get(i).time
-//                    && contains( route.hasVisit ,competitors.get(i).hasVisit )
+                    && contains( route.hasVisitBitSet ,competitors.get(i).hasVisitBitSet )
             ){
                 competitors.remove(i);
             }else{
@@ -74,12 +71,12 @@ public class ESPPRC {
         return false;
     }
 
-    private boolean contains(int[] big , int[] small){
-        for (int i = 0; i < big.length; i++) {
-            if((big[i]&small[i]) != small[i]){
-                return false;
-            }
+    private boolean contains(BitSet big , BitSet small){
+        BitSet bigClone = (BitSet) big.clone();
+        bigClone.or(small);
+        if(bigClone.equals(big)){
+            return true;
         }
-        return true;
+        return false;
     }
 }

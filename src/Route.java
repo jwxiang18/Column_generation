@@ -5,8 +5,8 @@ import java.util.List;
 public class Route {
     public Instance instance;
     public Order lastOrder;
-    public List<Order> path;
-    public int[] hasVisit;
+
+    public List<Integer> path;
     public BitSet hasVisitBitSet;
     public double  distance , time , sigma ,dual ;
     public double weight ;
@@ -14,12 +14,11 @@ public class Route {
     public Route(Instance instance){
         this.instance = instance;
         path = new ArrayList<>();
-        path.add(instance.orders[0]);
-        hasVisit = new int[(int)Math.ceil(instance.orders.length/32.0)];
+        path.add(instance.orders[0].NO);
+
         hasVisitBitSet = new BitSet(instance.orders.length);
-        BitSet hasVisitBitSet2 = new BitSet(instance.orders.length);
         hasVisitBitSet.set(0);
-        hasVisit[0] += 1;
+
         lastOrder = instance.orders[0];
         weight = 0;
         sigma = 0;
@@ -29,25 +28,24 @@ public class Route {
     }
     public void initAdd(Order order){
         weight += order.demand;
-        hasVisit[order.NO/32] += 1<<(order.NO%32);
-
-        path.add(order);
-        path.add(instance.orders[instance.orders.length-1]);
+        hasVisitBitSet.set(order.NO);
+        path.add(order.NO);
+        path.add(instance.orders[instance.orders.length-1].NO);
         distance = instance.distance[0][order.NO] + instance.distance[order.NO][instance.orders.length -1];
         time += distance ;
 
     }
 
     public Route add(Order order , double []duals){
-        if((hasVisit[order.NO/32] & (1<<(order.NO%32))) != 0) return null; // 如果已经访问了，这返回空
+        if(hasVisitBitSet.get(order.NO)) return null;
         if(weight + order.demand > instance.capacity) return null;
         double newTime = Math.max(time + instance.distance[lastOrder.NO][order.NO] , order.readyTime) ;
         if(newTime <= order.dueDate){
             Route newRoute = new Route(instance);
             newRoute.path = new ArrayList<>(path);
-            newRoute.path.add(order);
-            newRoute.hasVisit = hasVisit.clone();
-            newRoute.hasVisit[order.NO/32] += 1<<(order.NO%32);
+            newRoute.path.add(order.NO);
+            newRoute.hasVisitBitSet = (BitSet) hasVisitBitSet.clone();
+            newRoute.hasVisitBitSet.set(order.NO);
             newRoute.weight = weight + order.demand;
             newRoute.lastOrder = order;
             newRoute.time = newTime + order.serviceTime;
@@ -62,9 +60,10 @@ public class Route {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < path.size(); i++) {
-            sb.append(path.get(i).NO);
+            sb.append(path.get(i));
             sb.append(" ");
         }
         return sb.toString();
     }
+
 }
